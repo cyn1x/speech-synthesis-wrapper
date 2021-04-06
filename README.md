@@ -1,2 +1,2 @@
-# TTS-Middleware
-Server application to process client text-to-speech requests.
+# TTS-Web-Server
+Middleware that processes client text-to-speech requests. 
