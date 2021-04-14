@@ -8,14 +8,32 @@ import (
 	"github.com/tafenswdigitallab/tts-web-server/pkg/api"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Path[1:]
-	fmt.Fprintf(w, "Request for %s received", path)
+// APIHandler ...
+type APIHandler struct{}
 
-	api.Handler(path)
+func (apiHandler *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Println("Verifying request")
+
+	path := r.URL.Path[1:]
+
+	fmt.Fprintf(w, "Requesting path %s\n", path)
+	api.Handler(w, r)
+}
+
+func handle(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
+
+	fmt.Fprintf(w, "Welcome to the home page!")
 }
 
 func main() {
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	mux := http.NewServeMux()
+
+	mux.Handle("/api/", &APIHandler{})
+	mux.HandleFunc("/", handle)
+
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
