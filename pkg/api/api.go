@@ -1,7 +1,7 @@
 package api
 
 import (
-	"fmt"
+	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -16,16 +16,14 @@ const (
 // Handler transmits data to be processed by the tts module and returns the
 // received data to the client
 func Handler(w http.ResponseWriter, r *http.Request) {
-	p := strings.Split(r.URL.Path, "/api/")
-	s := strings.Replace(p[1], "/", "", -1)
-
+	uri := determineURI(r)
 	body, err := io.ReadAll(r.Body)
 
-	var svc interface{}
+	var byt []byte
 
-	switch s {
+	switch uri {
 	case google:
-		svc, err = tts.HandleGoogle(body)
+		byt, err = tts.HandleGoogle(&body)
 		break
 	default:
 		http.NotFound(w, r)
@@ -34,9 +32,29 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+
 		return
 	}
 
-	fmt.Fprintf(w, "%+v", svc)
+	sendMessage(w, &byt)
 
+}
+
+func determineURI(r *http.Request) string {
+	p := strings.Split(r.URL.Path, "/api/")
+	s := strings.Replace(p[1], "/", "", -1)
+
+	return s
+}
+
+func sendMessage(w http.ResponseWriter, bytes *[]byte) {
+	jso, err := json.Marshal(bytes)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Write(jso)
 }

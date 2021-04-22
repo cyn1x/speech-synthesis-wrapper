@@ -2,8 +2,6 @@ package tts
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
 	"log"
 
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
@@ -35,9 +33,9 @@ type voice struct {
 	Name         string `json:"name"`
 }
 
-// ProcessGoogle sends a JSON file to a text-to-speech cloud service in
-// exchange for an audio file
-func ProcessGoogle(data GoogleData) {
+// ProcessGoogle sends JSON to the Google text-to-speech cloud API in exchange
+// for the synthesised speech
+func ProcessGoogle(data GoogleData) []byte {
 	ctx := context.Background()
 
 	client, err := texttospeech.NewClient(ctx)
@@ -63,11 +61,5 @@ func ProcessGoogle(data GoogleData) {
 		log.Fatal(err)
 	}
 
-	// The resp's AudioContent is binary.
-	filename := "output.mp3"
-	err = ioutil.WriteFile(filename, res.AudioContent, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Audio content written to file: %v\n", filename)
+	return res.AudioContent
 }

@@ -8,15 +8,18 @@ import (
 	"github.com/tafenswdigitallab/tts-web-server/pkg/api"
 )
 
-// APIHandler ...
-type APIHandler struct{}
+// API ...
+type API struct{}
 
-func (apiHandler *APIHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Println("Verifying request")
+func (APIData *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	apiHeaders(w)
 
-	path := r.URL.Path[1:]
+	if r.Method == "OPTIONS" {
+		handlePreflight()
 
-	fmt.Fprintf(w, "Requesting path %s\n", path)
+		return
+	}
+
 	api.Handler(w, r)
 }
 
@@ -29,10 +32,19 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the home page!")
 }
 
+func handlePreflight() {}
+
+func apiHeaders(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func main() {
 	mux := http.NewServeMux()
 
-	mux.Handle("/api/", &APIHandler{})
+	mux.Handle("/api/", &API{})
 	mux.HandleFunc("/", handle)
 
 	log.Fatal(http.ListenAndServe(":8080", mux))
