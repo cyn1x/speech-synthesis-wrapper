@@ -2,26 +2,55 @@ package tts
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 )
 
-// HandleGoogle ...
-func HandleGoogle(data *[]byte) ([]byte, error) {
+// GoogleGet returns the available text to speech voices
+func GoogleGet() ([]byte, error) {
+	var byt []byte
+	var err error
+
+	res := ListGoogle()
+
+	byt, err = encode(res)
+
+	return byt, err
+}
+
+// GooglePost ...
+func GooglePost(data *[]byte) ([]byte, error) {
 	svc := GoogleData{}
 
 	var byt []byte
 	var err error
 
-	if err = json.Unmarshal([]byte(*data), &svc); err != nil {
-		log.Println(err)
+	decode(data, &svc)
 
-		return byt, err
-	}
+	res := ProcessGoogle(svc)
 
-	fmt.Println(svc)
-
-	byt = ProcessGoogle(svc)
+	byt, err = encode(res)
 
 	return byt, err
+}
+
+func encode(data interface{}) ([]byte, error) {
+	byt, err := json.Marshal(data)
+
+	if err != nil {
+		log.Println(err)
+
+		return nil, err
+	}
+
+	return byt, nil
+}
+
+func decode(data *[]byte, svc interface{}) (interface{}, error) {
+	if err := json.Unmarshal([]byte(*data), &svc); err != nil {
+		log.Println(err)
+
+		return nil, err
+	}
+
+	return svc, nil
 }

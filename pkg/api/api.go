@@ -1,8 +1,8 @@
 package api
 
 import (
-	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 
@@ -23,7 +23,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	switch uri {
 	case google:
-		byt, err = tts.HandleGoogle(&body)
+		byt, err = handleGoogleRequest(r.Method, &body)
 		break
 	default:
 		http.NotFound(w, r)
@@ -47,8 +47,21 @@ func determineURI(r *http.Request) string {
 	return s
 }
 
-func sendMessage(w http.ResponseWriter, bytes *[]byte) {
-	jso, err := json.Marshal(bytes)
+func handleGoogleRequest(method string, data *[]byte) ([]byte, error) {
+	var byt []byte
+	var err error
+
+	if method == http.MethodGet {
+		byt, err = tts.GoogleGet()
+	} else if method == http.MethodPost {
+		byt, err = tts.GooglePost(data)
+	}
+
+	return byt, err
+}
+
+func sendMessage(w http.ResponseWriter, byt *[]byte) {
+	len, err := w.Write(*byt)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -56,5 +69,5 @@ func sendMessage(w http.ResponseWriter, bytes *[]byte) {
 		return
 	}
 
-	w.Write(jso)
+	log.Printf("%v bytes written", len)
 }

@@ -33,6 +33,24 @@ type voice struct {
 	Name         string `json:"name"`
 }
 
+// ListGoogle returns the available text to speech voices
+func ListGoogle() *texttospeechpb.ListVoicesResponse {
+	ctx := context.Background()
+
+	client, err := texttospeech.NewClient(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Performs the list voices request.
+	res, err := client.ListVoices(ctx, &texttospeechpb.ListVoicesRequest{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return res
+}
+
 // ProcessGoogle sends JSON to the Google text-to-speech cloud API in exchange
 // for the synthesised speech
 func ProcessGoogle(data GoogleData) []byte {
