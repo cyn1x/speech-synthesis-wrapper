@@ -1,79 +1,162 @@
-import React, { useEffect, useState } from 'react';
-import { AudioProps, SpeechProps, SubmissionProps } from './types';
+import React, { useContext, useMemo, useState } from 'react'
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
+import { AudioContext, PlatformContext, ServiceContext } from '../provider'
+import HandleUpload from './handler'
 
-const GoogleData = {
-    audioConfig: {
-        audioEncoding: "LINEAR16",
-        pitch: 0,
-        speakingRate: 1
-    },
-    input: {
-        text: "Hello, World!"
-    },
-    voice: {
-        "languageCode": "en-US",
-        "name": "en-US-Wavenet-G"
-    }
-};
+const FormContainer = () => {
+  const platforms = useContext(PlatformContext)
+  const [name, setName] = useState(platforms[0])
+  const [base64, setBase64] = useState('')
+  const [validated, setValidated] = useState(false)
 
-const Form = (props: SpeechProps) => {
-    return (
-        <>
-            <SubmitButton
-                audio={props.audio}
-                setAudio={props.setAudio}
-            />
-        </>
-    );
+  const serviceName = useMemo(() => ({name, setName}), [name, setName])
+
+  return (
+    <>
+      <AudioContext.Provider value={{base64, setBase64}}>
+        <ServiceContext.Provider value={serviceName}>
+          <Form noValidate validated={validated} onSubmit={HandleSubmit}>
+            <ServiceSelection />
+            <TextArea />
+            <LanguageSelection />
+            <VoiceSelection />
+            <VoiceStyle />
+            <VoiceProfile />
+            <SubmitButton />
+          </Form>
+        </ServiceContext.Provider>
+      </AudioContext.Provider>
+    </>
+  )
 }
 
-const SubmitButton = (props: SpeechProps) => {
-    return (
-        <button onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            const submission: SubmissionProps = {
-                audioData: props,
-                clickHandler: event
-            }
+const ServiceSelection = () => {
+  const platforms = useContext(PlatformContext)
+  const service = useContext(ServiceContext)
 
-            HandleSubmit(submission)
-        }}>
-            Speak it!
-        </button>
-    )
+  console.debug(service.name)
+
+  return (
+      <Form.Group controlId="formGroupServiceSelection">
+        <Form.Control 
+          as="select"
+          name="serviceSelection"
+          disabled
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => service.setName(e.target.value)}
+        >
+        {platforms.map((svc, id) => 
+            <option key={id}>
+              {svc}
+            </option>
+          )}
+        </Form.Control>
+      </Form.Group>
+  )
 }
 
-const HandleSubmit = async (props: SubmissionProps) => {
-    const voiceData = Package(await Fetch())
-    
-    props.audioData.setAudio(await voiceData)
-    PlayVoice((await voiceData).synthesisData)
+const TextArea = () => {
+  return (
+    <Form.Group controlId="formGroupTextarea">
+    <Form.Label>Text to speak:</Form.Label>
+      <Form.Control
+        as="textarea"
+        name="textToSpeak"
+        rows={3}
+        placeholder="Replace this with the defaults in config.json" />
+    </Form.Group>
+  )
 }
 
-const Fetch = async () => {
-    const response = await fetch('http://localhost:8080/api/google', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(GoogleData)
-    })
+const LanguageSelection = () => {
+  const temp = ["English (Australia)", "English (Canada)"]
 
-    return response
+  return (
+    <Form.Group controlId="formGroupLanguageSelection">
+      <Form.Control as="select" name="languageSelection">
+        {temp.map((lang, id) => 
+          <option key={id}>
+            {lang}
+          </option>
+        )}
+      </Form.Control>
+    </Form.Group>
+  )
 }
 
-const Package = async (res: Response) => {
-    const DefaultVoiceProps: AudioProps = {
-        synthesisData: await res.json(),
-        isPlaying: false
-    }
+const VoiceSelection = () => {
+  const temp = ["Basic", "WaveNet"]
 
-    return DefaultVoiceProps
+  return (
+    <Form.Group controlId="formGroupVoiceSelection">
+      <Form.Control as="select" name="voiceSelection">
+        {temp.map((voice, id) => 
+          <option key={id}>
+            {voice}
+          </option>
+        )}
+      </Form.Control>
+    </Form.Group>
+  )
 }
 
-const PlayVoice = (props: string) => {
-    const speech = new Audio("data:audio/wav;base64," + props)
+const VoiceStyle = () => {
+  const temp = ["en-US-Standard-A", "en-US-Standard-B"]
 
-    speech.play()
+  return (
+    <Form.Group controlId="formGroupVoiceStyle">
+      <Form.Control as="select" name="voiceStyle">
+        {temp.map((voice, id) => 
+          <option key={id}>
+            {voice}
+          </option>
+        )}
+      </Form.Control>
+    </Form.Group>
+  )
 }
 
-export default Form
+const VoiceProfile = () => {
+  const temp = ["Default", "Smart watch or wearable"]
+
+  return (
+    <Form.Group controlId="formGroupVoiceProfile">
+      <Form.Control as="select" name="voiceProfile">
+        {temp.map((voice, id) => 
+          <option key={id}>
+            {voice}
+          </option>
+        )}
+      </Form.Control>
+    </Form.Group>
+  )
+}
+
+const SubmitButton = () => {
+  return (
+    <Button variant="primary" type="submit">
+      Speak it!
+    </Button>
+  )
+}
+
+const HandleSubmit = async (event: React.BaseSyntheticEvent) => {
+  event.preventDefault()
+
+  const formData = new FormData(event.target),
+    formDataObj = Object.fromEntries(formData.entries())
+
+  console.debug(formDataObj.textToSpeak)
+
+  const synthesisedData = HandleUpload()
+  
+  PlayVoice(await synthesisedData)
+}
+
+const PlayVoice = (data: string) => {
+  const speech = new Audio("data:audio/wav;base64," + data)
+
+  speech.play()
+}
+
+export default FormContainer

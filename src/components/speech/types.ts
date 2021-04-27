@@ -1,16 +1,20 @@
-import React, { Dispatch, SetStateAction } from "react";
-
-export interface SpeechProps {
-    audio: AudioProps
-    setAudio: Dispatch<SetStateAction<AudioProps>>
+export interface GoogleData {
+  audioConfig: GoogleAudioConfig
+  input: GoogleInput
+  voice: GoogleVoice
 }
 
-export interface AudioProps {
-    synthesisData: string
-    isPlaying?: boolean
+interface GoogleAudioConfig {
+  audioEncoding: string
+  pitch: number
+  speakingRate: number
 }
 
-export interface SubmissionProps {
-    audioData: SpeechProps
-    clickHandler: React.MouseEvent
+interface GoogleInput {
+  text: string
+}
+
+interface GoogleVoice {
+  languageCode: string
+  name: string
 }
