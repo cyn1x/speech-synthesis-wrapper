@@ -1,41 +1,54 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { AudioContext, PlatformContext, ServiceContext } from '../provider'
-import HandleUpload from './handler'
+import { PlatformContext, ServiceContext } from '../provider'
+import { GetVoices, PostVoices } from './handler'
+import { VoiceTypes } from './types'
 
-const FormContainer = () => {
-  const platforms = useContext(PlatformContext)
-  const [name, setName] = useState(platforms[0])
+const FormController = () => {
+  const platformContext = useContext(PlatformContext)
+  const [platform, setPlatform] = useState(platformContext[0])
+  const [voices, setVoices] = useState<Map<string, VoiceTypes>>();
+
+  useEffect(() => {
+    (async () => {
+      const voiceList = await GetVoices(platform)
+
+      setVoices(voiceList)
+    })();
+
+  }, [platform]);
+
+  return (
+    voices === undefined 
+      ? <div>Loading...</div> 
+      : <ServiceContext.Provider value={{platform, setPlatform}}>
+          <FormContainer voiceList={voices} />
+        </ServiceContext.Provider>
+  )
+}
+
+const FormContainer = ({ voiceList }: { voiceList: Map<string, VoiceTypes> }) => {
   const [base64, setBase64] = useState('')
   const [validated, setValidated] = useState(false)
 
-  const serviceName = useMemo(() => ({name, setName}), [name, setName])
-
   return (
     <>
-      <AudioContext.Provider value={{base64, setBase64}}>
-        <ServiceContext.Provider value={serviceName}>
-          <Form noValidate validated={validated} onSubmit={HandleSubmit}>
-            <ServiceSelection />
-            <TextArea />
-            <LanguageSelection />
-            <VoiceSelection />
-            <VoiceStyle />
-            <VoiceProfile />
-            <SubmitButton />
-          </Form>
-        </ServiceContext.Provider>
-      </AudioContext.Provider>
+      <Form noValidate validated={validated} onSubmit={HandleSubmit}>
+        <ServiceSelection />
+        <TextArea />
+        <VoiceOptions voiceList={voiceList} />
+        <SubmitButton />
+      </Form>
     </>
   )
 }
 
 const ServiceSelection = () => {
-  const platforms = useContext(PlatformContext)
-  const service = useContext(ServiceContext)
+  const platformContext = useContext(PlatformContext)
+  const serviceContext = useContext(ServiceContext)
 
-  console.debug(service.name)
+  console.debug(serviceContext.platform)
 
   return (
       <Form.Group controlId="formGroupServiceSelection">
@@ -43,13 +56,13 @@ const ServiceSelection = () => {
           as="select"
           name="serviceSelection"
           disabled
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => service.setName(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => serviceContext.setPlatform(e.target.value)}
         >
-        {platforms.map((svc, id) => 
+        {platformContext.map((svc, id) => 
             <option key={id}>
               {svc}
             </option>
-          )}
+        )}
         </Form.Control>
       </Form.Group>
   )
@@ -68,68 +81,89 @@ const TextArea = () => {
   )
 }
 
-const LanguageSelection = () => {
-  const temp = ["English (Australia)", "English (Canada)"]
+const VoiceOptions = ({ voiceList }: { voiceList: Map<string, VoiceTypes> }) => {
+  const [lang, setLang] = useState(voiceList.get('English (Australia)') !== undefined ? 'English (Australia)' : 'English (US)')
+  const [type, setType] = useState('Neural')
+  const types = ['Neural', 'Standard']
+
+  const voice = voiceList.get(lang)
+
+  if (voice !== undefined) {
+    return (
+      <>
+        <Form.Group controlId="formGroupVoiceLanguage">
+          <Form.Control 
+            as="select"
+            name="voiceLanguage" value={lang}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              {Array.from( voiceList ).map(([ key, value ], id) => {
+                if (key === e.target.value) {
+                  if (value.standard.length !== 0 && value.neural.length !== 0) {
+                    setType('Neural')
+
+                    return
+                  }
+
+                  setType('Standard')
+                }
+              })}
+              setLang(e.target.value);
+            }
+          }
+          >
+            {Array.from( voiceList ).map(([ key, value ], id) => <option key={id}>{ key }</option>)}
+          </Form.Control>
+        </Form.Group>
+        <Form.Group controlId="formGroupVoiceType">
+        <Form.Control
+            as="select"
+            name="voiceType"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setType(e.target.value)}
+        >          
+          {Array.from( voiceList ).map(([ key, value ], id) => {
+            if (key === lang) {
+              return (
+                types.map((type, index) => {
+                  const neuralIsAvailable = value.standard.length !== 0 && value.neural.length !== 0
+
+                  if (type === 'Neural' && neuralIsAvailable) {
+                    return <option key={index}>Neural</option>
+                  }
+                  else if (type === 'Neural' && !neuralIsAvailable) {
+                    return <option key={index} disabled>Neural</option>
+                  }
+
+                  return <option key={index}>Standard</option>
+                })
+              )
+            }
+          })}
+        </Form.Control>
+        </Form.Group>
+        <VoiceStyle voiceVariants={type === 'Neural' ? voice.neural : voice.standard} />
+      </>
+    )
+  }
 
   return (
-    <Form.Group controlId="formGroupLanguageSelection">
-      <Form.Control as="select" name="languageSelection">
-        {temp.map((lang, id) => 
-          <option key={id}>
-            {lang}
-          </option>
-        )}
-      </Form.Control>
-    </Form.Group>
+    <div>
+      Error
+    </div>
   )
+  
 }
 
-const VoiceSelection = () => {
-  const temp = ["Basic", "WaveNet"]
-
-  return (
-    <Form.Group controlId="formGroupVoiceSelection">
-      <Form.Control as="select" name="voiceSelection">
-        {temp.map((voice, id) => 
-          <option key={id}>
-            {voice}
-          </option>
-        )}
-      </Form.Control>
-    </Form.Group>
-  )
-}
-
-const VoiceStyle = () => {
-  const temp = ["en-US-Standard-A", "en-US-Standard-B"]
-
+const VoiceStyle = ({ voiceVariants }: { voiceVariants: string[] }) => {
   return (
     <Form.Group controlId="formGroupVoiceStyle">
       <Form.Control as="select" name="voiceStyle">
-        {temp.map((voice, id) => 
-          <option key={id}>
-            {voice}
-          </option>
-        )}
+        {voiceVariants.map((voice, id) => {
+          return <option key={id}>{voice}</option>
+        })}
       </Form.Control>
     </Form.Group>
   )
-}
-
-const VoiceProfile = () => {
-  const temp = ["Default", "Smart watch or wearable"]
-
-  return (
-    <Form.Group controlId="formGroupVoiceProfile">
-      <Form.Control as="select" name="voiceProfile">
-        {temp.map((voice, id) => 
-          <option key={id}>
-            {voice}
-          </option>
-        )}
-      </Form.Control>
-    </Form.Group>
-  )
+  
 }
 
 const SubmitButton = () => {
@@ -140,6 +174,10 @@ const SubmitButton = () => {
   )
 }
 
+const HandleLanguageChange = () => {
+  
+}
+
 const HandleSubmit = async (event: React.BaseSyntheticEvent) => {
   event.preventDefault()
 
@@ -148,9 +186,9 @@ const HandleSubmit = async (event: React.BaseSyntheticEvent) => {
 
   console.debug(formDataObj.textToSpeak)
 
-  const synthesisedData = HandleUpload()
-  
-  PlayVoice(await synthesisedData)
+  const res = PostVoices('Google')
+
+  PlayVoice(await res)
 }
 
 const PlayVoice = (data: string) => {
@@ -159,4 +197,4 @@ const PlayVoice = (data: string) => {
   speech.play()
 }
 
-export default FormContainer
+export default FormController

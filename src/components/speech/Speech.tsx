@@ -1,7 +1,7 @@
-import FormContainer from './Form'
+import FormController from './Form'
 
 const Container = () => (
-    <FormContainer />
+    <FormController />
 )
 
 export default Container
