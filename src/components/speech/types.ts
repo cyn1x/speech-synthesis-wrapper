@@ -5,6 +5,27 @@ export interface PlatformService {
   setPlatform: Dispatch<SetStateAction<string>>
 }
 
+export interface DynamicFormData {
+  state: FormStateManager,
+  data: FormStateData  
+}
+
+interface FormStateManager {
+  getState: LanguageState
+  setState: React.Dispatch<React.SetStateAction<LanguageState>>
+}
+
+interface LanguageState { 
+  lang: string,
+  type: string,
+}
+
+export interface FormStateData {
+  voiceList: Map<string, VoiceTypes>,
+  voiceTypes: string[],
+  voiceLang: string
+}
+
 export interface GoogleIncoming {
   language_codes: string[]
   name: string

@@ -1,20 +1,6 @@
 import { GoogleIncoming, VoiceTypes } from './types'
 import LanguageTags from './config'
 
-const GoogleData = {
-  audioConfig: {
-    audioEncoding: "LINEAR16",
-    pitch: 0,
-    speakingRate: 1
-  },
-  input: {
-    text: "Hello, World!"
-  },
-  voice: {
-    "languageCode": "en-US",
-    "name": "en-US-Wavenet-G"
-  }
-}
 const google = "Google"
 
 export const GetVoices = async (platform: string) => {
@@ -70,14 +56,37 @@ const AddGoogleVoice = (voiceType: GoogleIncoming, voice: VoiceTypes) => {
   voice.neural.push(voiceType.name)
 }
 
-export const PostVoices = async (platform: string) => {
+export const PostVoices = async (platform: string, data: { [k: string]: FormDataEntryValue }) => {
   switch (platform) {
     case google:
-      const body = JSON.stringify(GoogleData)
-      return await HandlePost(body)
+      const body = PackageGoogleVoices(data)
+      // return await HandlePost(body)
     // Not currently supporting other text-to-speech services
   }
 
+}
+
+const PackageGoogleVoices = (data: { [k: string]: FormDataEntryValue }) => {
+  const languageTags: Map<string, string> = LanguageTags()
+  
+  const GoogleData = {
+    audioConfig: {
+      audioEncoding: "LINEAR16",
+      pitch: 0,
+      speakingRate: 1
+    },
+    input: {
+      text: data.textToSpeak
+    },
+    voice: {
+      "languageCode": "en-AU",
+      "name": data.voiceStyle
+    }
+  }
+
+  const jso = JSON.stringify(GoogleData)
+
+  return jso
 }
 
 const HandleGet = async () => {
