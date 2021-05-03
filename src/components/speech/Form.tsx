@@ -223,7 +223,7 @@ const HandleSubmit = async (event: FormEvent<HTMLFormElement>, platform: string)
 
   const res = PostVoices(platform, formDataObj)
 
-  // PlayVoice(await res)
+  PlayVoice(await res)
 }
 
 const PlayVoice = (data: string) => {

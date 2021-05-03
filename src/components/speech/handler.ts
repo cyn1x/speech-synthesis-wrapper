@@ -1,11 +1,19 @@
 import { GoogleIncoming, VoiceTypes } from './types'
 import LanguageTags from './config'
 
-const google = "Google"
+const Services = () => {
+  const services = {
+    google: "Google"
+  }
+
+  return services
+}
 
 export const GetVoices = async (platform: string) => {
+  const services = Services()
+
   switch (platform) {
-    case google:
+    case services.google:
       return ApplyGoogleVoices()
     // Not currently supporting other text-to-speech services
   }
@@ -57,17 +65,19 @@ const AddGoogleVoice = (voiceType: GoogleIncoming, voice: VoiceTypes) => {
 }
 
 export const PostVoices = async (platform: string, data: { [k: string]: FormDataEntryValue }) => {
+  const services = Services()
+
   switch (platform) {
-    case google:
+    case services.google:
       const body = PackageGoogleVoices(data)
-      // return await HandlePost(body)
+      return await HandlePost(body)
     // Not currently supporting other text-to-speech services
   }
 
 }
 
 const PackageGoogleVoices = (data: { [k: string]: FormDataEntryValue }) => {
-  const languageTags: Map<string, string> = LanguageTags()
+  const languageCode = PackageGoogleHelper(data.voiceLanguage as string)
   
   const GoogleData = {
     audioConfig: {
@@ -79,7 +89,7 @@ const PackageGoogleVoices = (data: { [k: string]: FormDataEntryValue }) => {
       text: data.textToSpeak
     },
     voice: {
-      "languageCode": "en-AU",
+      "languageCode": languageCode,
       "name": data.voiceStyle
     }
   }
@@ -87,6 +97,19 @@ const PackageGoogleVoices = (data: { [k: string]: FormDataEntryValue }) => {
   const jso = JSON.stringify(GoogleData)
 
   return jso
+}
+
+const PackageGoogleHelper = (language: string) => {
+  const languageTags: Map<string, string> = LanguageTags()
+  let languageCode = ""
+  
+  Array.from( languageTags ).map(([ key, value ], id) => {
+    if (language === value) {
+      languageCode = key
+    }
+  })
+
+  return languageCode
 }
 
 const HandleGet = async () => {
