@@ -17,9 +17,9 @@ type GoogleData struct {
 
 // AudioConfig ...
 type audioConfig struct {
-	AudioEncoding string `json:"audioEncoding"`
-	Pitch         int    `json:"pitch"`
-	SpeakingRate  int    `json:"speakingRate"`
+	AudioEncoding string  `json:"audioEncoding"`
+	Pitch         float64 `json:"pitch"`
+	SpeakingRate  float64 `json:"speakingRate"`
 }
 
 // Input ...
@@ -62,15 +62,17 @@ func ProcessGoogle(data GoogleData) []byte {
 	}
 
 	req := texttospeechpb.SynthesizeSpeechRequest{
+		AudioConfig: &texttospeechpb.AudioConfig{
+			AudioEncoding: texttospeechpb.AudioEncoding_MP3,
+			Pitch:         data.AudioConfig.Pitch,
+			SpeakingRate:  data.AudioConfig.SpeakingRate,
+		},
 		Input: &texttospeechpb.SynthesisInput{
 			InputSource: &texttospeechpb.SynthesisInput_Text{Text: data.Input.Text},
 		},
 		Voice: &texttospeechpb.VoiceSelectionParams{
 			LanguageCode: data.Voice.LanguageCode,
 			SsmlGender:   texttospeechpb.SsmlVoiceGender_NEUTRAL,
-		},
-		AudioConfig: &texttospeechpb.AudioConfig{
-			AudioEncoding: texttospeechpb.AudioEncoding_MP3,
 		},
 	}
 
