@@ -48,19 +48,21 @@ export const UnpackageGoogleVoices = async(fetchedVoices: any) => {
 
   })
 
-  return languageMap
+  const sortedLanguageMap = new Map([...languageMap.entries()].sort())
+
+  return sortedLanguageMap
 }
 
 const AddGoogleVoice = (voiceType: GoogleIncoming, voice: VoiceTypes) => {
   const genderAndType = DetermineGender(voiceType.ssml_gender, voiceType.name)
 
   if (voiceType.name.includes(GenericVoiceTypes().standard)) {
-    voice.standard.push(genderAndType)
+    voice.standard.push("Standard " + genderAndType)
 
     return
   }
 
-  voice.neural.push(genderAndType)
+  voice.neural.push("Neural " + genderAndType)
 }
 
 const DetermineGender = (genderCode: number, voiceName: string) => {
@@ -68,13 +70,13 @@ const DetermineGender = (genderCode: number, voiceName: string) => {
 
     switch(genderCode) {
       case Genders.ssml_gender_male:
-        return "Voice-" + alphabetLetter + "-Male"
+        return alphabetLetter + " (Male)"
       case Genders.ssml_gender_female:
-        return "Voice-" + alphabetLetter + "-Female"
+        return alphabetLetter + " (Female)"
       case Genders.ssml_gender_neutral:
-        return "Voice-" + alphabetLetter + "-Neutral"
+        return alphabetLetter + " (Neutral)"
       default:
-        return "Voice-" + alphabetLetter + "-Unspecified"
+        return alphabetLetter + " (Unspecified)"
     }
 
 }
@@ -130,9 +132,9 @@ const PackageHelper = (language: string) => {
 }
 
 const DetermineVoiceType = (voiceTypeData: VoiceTypeData) => {
-  const letter = voiceTypeData.voiceName.split("-")[1]
+  const letter = voiceTypeData.voiceName.split(" ")[1]
   const voiceType = GooleVoiceTypes()
   const type = (voiceTypeData.voiceType === GenericVoiceTypes().neural ? voiceType.neural : voiceType.standard)
-
+  
   return voiceTypeData.languageTag + "-" + type + "-" + letter
 }
