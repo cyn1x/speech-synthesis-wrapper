@@ -1,11 +1,21 @@
-import { GoogleIncoming, VoiceTypes } from './types'
+import { GoogleIncoming, GoogleOutgoing, VoiceTypeData, VoiceTypeNames, VoiceTypes } from './types'
 import LanguageTags from './config'
+import { GenericVoiceTypes } from './handler'
 
-const Alphabet = () => {
-  const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-                    "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+enum Genders {
+  ssml_gender_voice_unspecified = 0,
+  ssml_gender_male = 1,
+  ssml_gender_female = 2,
+  ssml_gender_neutral = 3
+}
 
-  return alphabet
+const GooleVoiceTypes = () => {
+  const GoogleVoiceTypes: VoiceTypeNames = {
+    neural: "WaveNet",
+    standard: "Standard"
+  }
+
+  return GoogleVoiceTypes
 }
 
 export const UnpackageGoogleVoices = async(fetchedVoices: any) => {
@@ -42,56 +52,46 @@ export const UnpackageGoogleVoices = async(fetchedVoices: any) => {
 }
 
 const AddGoogleVoice = (voiceType: GoogleIncoming, voice: VoiceTypes) => {
-  if (voiceType.name.includes('Standard')) {
-    const genderAndType = DetermineGoogleGender(voiceType.name)
+  const genderAndType = DetermineGender(voiceType.ssml_gender, voiceType.name)
+
+  if (voiceType.name.includes(GenericVoiceTypes().standard)) {
     voice.standard.push(genderAndType)
 
     return
   }
-  
-  const genderAndType = DetermineGoogleGender(voiceType.name)
+
   voice.neural.push(genderAndType)
 }
 
-const DetermineGoogleGender = (voiceName: string) => {
-  const alphabet = Alphabet()
+const DetermineGender = (genderCode: number, voiceName: string) => {
+    const alphabetLetter = voiceName.slice(-1)
 
-  let genderAndType = ""
-
-  // The format of e.g. en-AU-WaveNet-A for voice types has been deemed to be unacceptable for user friendliness
-  // Google TTS API seems to have odd indexed alphabet letters as female and even as male
-  alphabet.forEach(letter => {
-    if (voiceName.endsWith(letter)) {
-      const isEven = (alphabet.indexOf(letter) + 1) % 2 === 0
-
-      if (isEven) {
-        genderAndType = "Male-" + letter
-
-        return
-      }
-
-        genderAndType = "Female-" + letter
-
-        return
+    switch(genderCode) {
+      case Genders.ssml_gender_male:
+        return "Voice-" + alphabetLetter + "-Male"
+      case Genders.ssml_gender_female:
+        return "Voice-" + alphabetLetter + "-Female"
+      case Genders.ssml_gender_neutral:
+        return "Voice-" + alphabetLetter + "-Neutral"
+      default:
+        return "Voice-" + alphabetLetter + "-Unspecified"
     }
-  })
 
-  return genderAndType
 }
 
 export const PackageGoogleVoices = (data: { [k: string]: FormDataEntryValue }) => {
-  const languageTag = data.voiceLanguage.toString()
-  const languageCode = PackageGoogleHelper(languageTag)
-  const name = DetermineVoiceType(languageCode, data.voiceType.toString(), data.voiceStyle.toString())
+  const languageCode = PackageHelper(data.voiceLanguage.toString())
+  const voiceTypeData = VoiceTypePacker(data, languageCode)
+  const name = DetermineVoiceType(voiceTypeData)
   
-  const GoogleData = {
+  const GoogleData: GoogleOutgoing = {
     audioConfig: {
       audioEncoding: "LINEAR16",
       pitch: 0.00,
       speakingRate: 1.00
     },
     input: {
-      text: data.textToSpeak
+      text: data.textToSpeak.toString()
     },
     voice: {
       "languageCode": languageCode,
@@ -104,7 +104,17 @@ export const PackageGoogleVoices = (data: { [k: string]: FormDataEntryValue }) =
   return jso
 }
 
-const PackageGoogleHelper = (language: string) => {
+const VoiceTypePacker = (data: { [k: string]: FormDataEntryValue }, languageCode: string): VoiceTypeData => {
+  const voiceTypeData: VoiceTypeData = {
+    languageTag: languageCode,
+    voiceType: data.voiceType.toString(),
+    voiceName: data.voiceStyle.toString()
+  }
+
+  return voiceTypeData
+}
+
+const PackageHelper = (language: string) => {
   const languageTags: Map<string, string> = LanguageTags()
   let languageCode = ""
   
@@ -119,15 +129,10 @@ const PackageGoogleHelper = (language: string) => {
   return languageCode
 }
 
-const DetermineVoiceType = (tag: string, type: string, test: string) => {
-  let voiceType = ""
+const DetermineVoiceType = (voiceTypeData: VoiceTypeData) => {
+  const letter = voiceTypeData.voiceName.split("-")[1]
+  const voiceType = GooleVoiceTypes()
+  const type = (voiceTypeData.voiceType === GenericVoiceTypes().neural ? voiceType.neural : voiceType.standard)
 
-  if (type === 'Neural') {
-    voiceType = "WaveNet"
-  }
-  else {
-    voiceType = "Standard"
-  }
-  
-  return tag + "-" + voiceType + "-" + test.slice(-1)
+  return voiceTypeData.languageTag + "-" + type + "-" + letter
 }

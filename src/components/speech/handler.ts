@@ -1,5 +1,5 @@
 import { PackageGoogleVoices, UnpackageGoogleVoices } from "./google"
-
+import { VoiceTypeNames } from "./types"
 
 const Services = () => {
   const services = {
@@ -7,6 +7,15 @@ const Services = () => {
   }
 
   return services
+}
+
+export const GenericVoiceTypes = () => {
+  const GenericVoiceTypes: VoiceTypeNames = {
+    neural: "Neural",
+    standard: "Standard"
+  }
+
+  return GenericVoiceTypes
 }
 
 export const GetVoices = async (platform: string) => {
@@ -27,7 +36,7 @@ export const PostVoices = async (platform: string, data: { [k: string]: FormData
   switch (platform) {
     case services.google:
       const body = PackageGoogleVoices(data)
-      // return await HandlePost(body)
+      return await HandlePost(body)
     // Not currently supporting other text-to-speech services
   }
 

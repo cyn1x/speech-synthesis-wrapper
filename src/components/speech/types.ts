@@ -26,6 +26,12 @@ export interface FormStateData {
   voiceLang: string
 }
 
+export interface VoiceTypeData {
+  languageTag: string,
+  voiceType: string,
+  voiceName: string
+}
+
 export interface GoogleIncoming {
   language_codes: string[]
   name: string
@@ -36,6 +42,11 @@ export interface GoogleIncoming {
 export interface VoiceTypes {
   standard: string[]
   neural: string[]
+}
+
+export interface VoiceTypeNames {
+  neural: string
+  standard: string
 }
 
 export interface GoogleOutgoing {
