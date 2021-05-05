@@ -2,7 +2,6 @@ package tts
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
@@ -57,8 +56,6 @@ func ListGoogle() *texttospeechpb.ListVoicesResponse {
 func ProcessGoogle(data GoogleData) []byte {
 	ctx := context.Background()
 
-	fmt.Println(data.Voice.Name)
-
 	client, err := texttospeech.NewClient(ctx)
 	if err != nil {
 		log.Fatal(err)
@@ -76,7 +73,6 @@ func ProcessGoogle(data GoogleData) []byte {
 		Voice: &texttospeechpb.VoiceSelectionParams{
 			Name:         data.Voice.Name,
 			LanguageCode: data.Voice.LanguageCode,
-			SsmlGender:   texttospeechpb.SsmlVoiceGender_NEUTRAL,
 		},
 	}
 

@@ -2,7 +2,6 @@ package api
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"strings"
 
@@ -62,13 +61,11 @@ func handleGoogleRequest(method string, data *[]byte) ([]byte, error) {
 }
 
 func sendMessage(w http.ResponseWriter, byt *[]byte) {
-	len, err := w.Write(*byt)
+	_, err := w.Write(*byt)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 
 		return
 	}
-
-	log.Printf("%v bytes written", len)
 }
