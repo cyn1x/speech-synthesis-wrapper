@@ -1,9 +1,11 @@
 import SpeechSynthesis from './components/speech'
-import './App.css'
+import './App.scss'
 
 function App() {
   return (
-    <SpeechSynthesis />
+    <div className="tts-form-wrapper">
+      <SpeechSynthesis />
+    </div>
   )
 }
 

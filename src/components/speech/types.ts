@@ -5,6 +5,12 @@ export interface PlatformService {
   setPlatform: Dispatch<SetStateAction<string>>
 }
 
+export interface RequestMethod {
+  uri: string,
+  method: string,
+  body: string | null
+}
+
 export interface DynamicFormData {
   state: FormStateManager,
   data: FormStateData  

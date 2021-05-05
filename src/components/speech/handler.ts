@@ -1,5 +1,5 @@
 import { PackageGoogleVoices, UnpackageGoogleVoices } from "./google"
-import { VoiceTypeNames } from "./types"
+import { RequestMethod, VoiceTypeNames } from "./types"
 
 const Services = () => {
   const services = {
@@ -20,7 +20,7 @@ export const GenericVoiceTypes = () => {
 
 export const GetVoices = async (platform: string) => {
   const services = Services()
-  const fetchedVoices = await HandleGet()
+  const fetchedVoices = await HandleGet(platform)
 
   switch (platform) {
     case services.google:
@@ -36,33 +36,47 @@ export const PostVoices = async (platform: string, data: { [k: string]: FormData
   switch (platform) {
     case services.google:
       const body = PackageGoogleVoices(data)
-      return await HandlePost(body)
+      return await HandlePost(platform, body)
     // Not currently supporting other text-to-speech services
   }
 
 }
 
-const HandleGet = async () => {
-  const res = await Fetch('GET', null)
+const HandleGet = async (platform: string) => {
+  const requestData: RequestMethod = {
+    uri: platform,
+    method: 'GET',
+    body: null
+  }
+
+  const res = await Fetch(requestData)
   const jso = await res.json()
 
   return jso
 }
 
-const HandlePost = async (body: string) => {
-  const res = await Fetch('POST', body)
+const HandlePost = async (platform: string, body: string) => {
+  const requestData: RequestMethod = {
+    uri: platform,
+    method: 'POST',
+    body: body
+  }
+
+  const res = await Fetch(requestData)
   const jso = await res.json()
 
   return jso
 }
 
-const Fetch = async (requestMethod: string, bodyContents: string | null) => {
-  const response = await fetch('http://localhost:8080/api/google', {
-    method: requestMethod,
+const Fetch = async (requestData: RequestMethod) => {
+  const server = 'http://localhost:8080/api/' + requestData.uri.toLowerCase()
+
+  const response = await fetch('data.json', {
+    method: requestData.method,
     headers: {
       'Content-Type': 'application/json'
     },
-    body: bodyContents
+    body: requestData.body
   })
 
   return response
