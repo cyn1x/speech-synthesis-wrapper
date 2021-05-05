@@ -27,7 +27,7 @@ export const PostVoices = async (platform: string, data: { [k: string]: FormData
   switch (platform) {
     case services.google:
       const body = PackageGoogleVoices(data)
-      return await HandlePost(body)
+      // return await HandlePost(body)
     // Not currently supporting other text-to-speech services
   }
 

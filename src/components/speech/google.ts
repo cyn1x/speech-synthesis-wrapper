@@ -62,7 +62,7 @@ const DetermineGoogleGender = (voiceName: string) => {
   // Google TTS API seems to have odd indexed alphabet letters as female and even as male
   alphabet.forEach(letter => {
     if (voiceName.endsWith(letter)) {
-      const isEven = (alphabet.indexOf(letter) + 1) % 2 == 0
+      const isEven = (alphabet.indexOf(letter) + 1) % 2 === 0
 
       if (isEven) {
         genderAndType = "Male-" + letter
@@ -112,6 +112,8 @@ const PackageGoogleHelper = (language: string) => {
     if (language === value) {
       languageCode = key
     }
+
+    return null
   })
 
   return languageCode

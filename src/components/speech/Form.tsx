@@ -29,7 +29,6 @@ const FormController = () => {
 }
 
 const FormContainer = ({ voiceList, platform }: { voiceList: Map<string, VoiceTypes>, platform: string }) => {
-  const platformContext = useContext(PlatformContext)
   const [base64, setBase64] = useState('')
   const [validated, setValidated] = useState(false)
 
@@ -117,23 +116,24 @@ const VoiceLanguage = (props: DynamicFormData) => {
         as="select"
         name="voiceLanguage" value={props.data.voiceLang}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          {Array.from( props.data.voiceList ).map(([ key, value ], id) => {
+          Array.from( props.data.voiceList ).map(([ key, value ], id) => {
             if (key === e.target.value) {
               if (value.standard.length !== 0 && value.neural.length !== 0) {
                 props.state.setState({
                   lang: e.target.value,
                   type: 'Neural'
                 })
-
-                return
               }
-
-              props.state.setState({
-                lang: e.target.value,
-                type: 'Standard'
-              })
+              else {
+                props.state.setState({
+                  lang: e.target.value,
+                  type: 'Standard'
+                })
+              }
             }
-          })}
+
+            return null
+          })
         }
       }
       >
@@ -171,6 +171,8 @@ const VoiceType = (props: DynamicFormData) => {
               })
             )
           }
+
+          return null
         })}
       </Form.Control>
     </Form.Group>
@@ -209,10 +211,6 @@ const SubmitButton = () => {
   )
 }
 
-const HandleLanguageChange = () => {
-  
-}
-
 const HandleSubmit = async (event: FormEvent<HTMLFormElement>, platform: string) => {
   event.preventDefault()
 
@@ -221,7 +219,7 @@ const HandleSubmit = async (event: FormEvent<HTMLFormElement>, platform: string)
 
   const res = PostVoices(platform, formDataObj)
 
-  PlayVoice(await res)
+  // PlayVoice(await res)
 }
 
 const PlayVoice = (data: string) => {
