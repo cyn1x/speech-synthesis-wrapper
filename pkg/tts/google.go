@@ -9,26 +9,26 @@ import (
 	texttospeechpb "google.golang.org/genproto/googleapis/cloud/texttospeech/v1"
 )
 
-// GoogleData ...
+// GoogleData is the parent struct for the audioConfig, input, and voice structs
 type GoogleData struct {
 	AudioConfig audioConfig `json:"audioConfig"`
 	Input       input       `json:"input"`
 	Voice       voice       `json:"voice"`
 }
 
-// AudioConfig ...
+// AudioConfig contains the speaking rate, and pitch
 type audioConfig struct {
 	AudioEncoding string  `json:"audioEncoding"`
 	Pitch         float64 `json:"pitch"`
 	SpeakingRate  float64 `json:"speakingRate"`
 }
 
-// Input ...
+// Input holds the text to be synthesised
 type input struct {
 	Text string `json:"text"`
 }
 
-// Voice ...
+// Voice contains the language or locale and the type or name of the voice
 type voice struct {
 	LanguageCode string `json:"languageCode"`
 	Name         string `json:"name"`

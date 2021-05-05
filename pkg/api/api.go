@@ -25,6 +25,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	case google:
 		byt, err = handleGoogleRequest(r.Method, &body)
 		break
+	// Not currently supporting other text-to-speech services
 	default:
 		http.NotFound(w, r)
 		return

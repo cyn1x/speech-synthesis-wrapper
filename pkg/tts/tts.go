@@ -17,7 +17,7 @@ func GoogleGet() ([]byte, error) {
 	return byt, err
 }
 
-// GooglePost ...
+// GooglePost returns the synthesised speech from text
 func GooglePost(data *[]byte) ([]byte, error) {
 	svc := GoogleData{}
 
