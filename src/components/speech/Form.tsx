@@ -49,8 +49,6 @@ const ServiceSelection = () => {
   const platformContext = useContext(PlatformContext)
   const serviceContext = useContext(ServiceContext)
 
-  console.debug(serviceContext.platform)
-
   return (
       <Form.Group controlId="formGroupServiceSelection">
         <Form.Control 
