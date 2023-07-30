@@ -23,6 +23,14 @@ class AudioManager {
         if (this.audio.src === "") {
             this.audio.src = "data:audio/wav;base64," + data.audioContent;
             this.filename = data.filename;
+
+            this.audio.addEventListener(
+                "ended",
+                () => {
+                    this.clearAudio();
+                },
+                false,
+            );
         }
 
         if (this.audioContext.state === "suspended") {
