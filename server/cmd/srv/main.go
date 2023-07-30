@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/tafenswdigitallab/tts-web-server/pkg/api"
 )
@@ -19,6 +20,18 @@ func (APIData *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	if r.URL.Path == "/api/download" {
+		filename := "download/" + r.URL.Query().Get("filename")
+		w.Header().Set("Content-Disposition", "attachment; filename="+strings.Split(filename, "/")[1]+"")
+		w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
+
+		http.ServeFile(w, r, filename)
+
+		return
+	}
+
+	log.Println("Request received:", r.Method, r.URL.Path, r.URL.Query())
 
 	api.Handler(w, r)
 }

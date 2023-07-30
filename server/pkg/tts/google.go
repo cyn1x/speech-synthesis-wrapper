@@ -3,8 +3,10 @@ package tts
 import (
 	"context"
 	"log"
+	"time"
 
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
+	"github.com/tafenswdigitallab/tts-web-server/pkg/util"
 	texttospeechpb "google.golang.org/genproto/googleapis/cloud/texttospeech/v1"
 )
 
@@ -33,6 +35,12 @@ type voice struct {
 	Name         string `json:"name"`
 }
 
+// ServerResponse is the JSON response sent back to the client
+type serverResponse struct {
+	Filename     string `json:"filename"`
+	AudioContent []byte `json:"audioContent"`
+}
+
 // ListGoogle returns the available text to speech voices
 func ListGoogle() *texttospeechpb.ListVoicesResponse {
 	ctx := context.Background()
@@ -48,12 +56,14 @@ func ListGoogle() *texttospeechpb.ListVoicesResponse {
 		log.Fatal(err)
 	}
 
+	log.Printf("List of voices retrieved successfully\n")
+
 	return res
 }
 
 // ProcessGoogle sends JSON to the Google text-to-speech cloud API in exchange
 // for the synthesised speech
-func ProcessGoogle(data GoogleData) []byte {
+func SynthesizeText(data GoogleData) serverResponse {
 	ctx := context.Background()
 
 	client, err := texttospeech.NewClient(ctx)
@@ -81,5 +91,19 @@ func ProcessGoogle(data GoogleData) []byte {
 		log.Fatal(err)
 	}
 
-	return res.AudioContent
+	log.Printf("Speech synthesised successfully\n")
+
+	filepath := "download/"
+	filename := data.Voice.Name
+	filename += "_" + time.Now().Format("20060102150405") + ".mp3"
+	util.WriteFile(res.AudioContent, filepath+filename)
+
+	log.Printf("Audio content written to file: %v\n", filename)
+
+	json := serverResponse{
+		Filename:     filename,
+		AudioContent: res.AudioContent,
+	}
+
+	return json
 }

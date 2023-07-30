@@ -23,7 +23,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	switch uri {
 	case google:
 		byt, err = handleGoogleRequest(r.Method, &body)
-		break
 	// Not currently supporting other text-to-speech services
 	default:
 		http.NotFound(w, r)
@@ -37,7 +36,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendMessage(w, &byt)
-
 }
 
 func determineURI(r *http.Request) string {

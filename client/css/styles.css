@@ -1,0 +1,98 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: auto;
+  max-width: 960px;
+  font-family: "Roboto", sans-serif;
+}
+
+fieldset {
+  padding: 2rem 1rem 2rem 1rem;
+}
+
+textarea {
+  resize: none;
+  height: 10rem;
+}
+
+label {
+  margin-bottom: 0.1em;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  padding-bottom: 1rem;
+}
+
+.row:last-child {
+  padding: 0;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.slider {
+  width: 100%;
+}
+
+
+.buttons {
+  flex-direction: column;
+  margin-top: 5rem;
+  width: 100%;
+}
+
+.button-controls {
+  align-self: flex-end;
+  width: 10rem;
+  height: 3rem;
+}
+
+select,
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 1rem
+}
+
+.column-1 {
+  flex-basis: 10rem;
+}
+
+.icons {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.button-controls {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.label-text {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #595959;
+}
+
+#download-icon {
+  filter: invert(69%) sepia(0%) saturate(0%) hue-rotate(197deg) brightness(93%) contrast(91%);
+}

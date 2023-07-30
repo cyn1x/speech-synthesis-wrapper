@@ -3,5 +3,5 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("TTS Web Server CLI initialised")
+	fmt.Println("Speec Synthesis Web Server CLI initialised")
 }

@@ -1,0 +1,5 @@
+server/config
+server/start-server.sh
+server/download
+client/data
+client/node_modules

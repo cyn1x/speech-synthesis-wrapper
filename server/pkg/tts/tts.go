@@ -1,8 +1,7 @@
 package tts
 
 import (
-	"encoding/json"
-	"log"
+	util "github.com/tafenswdigitallab/tts-web-server/pkg/util"
 )
 
 // GoogleGet returns the available text to speech voices
@@ -12,7 +11,7 @@ func GoogleGet() ([]byte, error) {
 
 	res := ListGoogle()
 
-	byt, err = encode(res)
+	byt, err = util.EncodeJson(res)
 
 	return byt, err
 }
@@ -24,33 +23,11 @@ func GooglePost(data *[]byte) ([]byte, error) {
 	var byt []byte
 	var err error
 
-	decode(data, &svc)
+	util.DecodeJson(data, &svc)
 
-	res := ProcessGoogle(svc)
+	res := SynthesizeText(svc)
 
-	byt, err = encode(res)
+	byt, err = util.EncodeJson(res)
 
 	return byt, err
-}
-
-func encode(data interface{}) ([]byte, error) {
-	byt, err := json.Marshal(data)
-
-	if err != nil {
-		log.Println(err)
-
-		return nil, err
-	}
-
-	return byt, nil
-}
-
-func decode(data *[]byte, svc interface{}) (interface{}, error) {
-	if err := json.Unmarshal([]byte(*data), &svc); err != nil {
-		log.Println(err)
-
-		return nil, err
-	}
-
-	return svc, nil
 }
