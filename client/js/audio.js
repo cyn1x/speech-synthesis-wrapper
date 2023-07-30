@@ -13,7 +13,8 @@ class AudioManager {
             this.audio.src = "data:audio/wav;base64," + data.audioContent;
             this.filename = data.filename;
             this.audio.addEventListener("ended", () => {
-                this.clearAudio();
+                this.buttonParagraph.innerText = "Speak It";
+                this.img.src = "img/play-solid.svg";
             }, false);
         }
         if (this.audioContext.state === "suspended") {
@@ -26,7 +27,7 @@ class AudioManager {
         }
         this.audio.play();
         this.playButton.dataset.playing = "true";
-        this.buttonParagraph.innerText = "";
+        this.buttonParagraph.innerText = "Pause";
         this.img.src = "img/pause-solid.svg";
         this.enableDownloadButton();
     }

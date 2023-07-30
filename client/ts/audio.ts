@@ -27,7 +27,8 @@ class AudioManager {
             this.audio.addEventListener(
                 "ended",
                 () => {
-                    this.clearAudio();
+                    this.buttonParagraph.innerText = "Speak It";
+                    this.img.src = "img/play-solid.svg";
                 },
                 false,
             );
@@ -45,7 +46,7 @@ class AudioManager {
 
         this.audio.play();
         this.playButton.dataset.playing = "true";
-        this.buttonParagraph.innerText = "";
+        this.buttonParagraph.innerText = "Pause";
         this.img.src = "img/pause-solid.svg";
 
         this.enableDownloadButton();
