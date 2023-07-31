@@ -4,8 +4,8 @@ Speech Synthesis Wrapper processes text-to-speech requests by providing a previe
 
 ## Requirements
 
-- [npm](https://www.npmjs.com/) (v6.14.6 or higher)
-- [Golang](https://golang.org/) (v1.15.2 or higher)
+- [npm](https://www.npmjs.com/)
+- [Golang](https://golang.org/)
 
 An API key for the [Google Cloud Text-to-Speech API](https://cloud.google.com/text-to-speech) is required to use this application. The API key should be stored in the `GOOGLE_APPLICATION_CREDENTIALS` environment variable.
 
@@ -35,6 +35,7 @@ go run ./cmd/srv/ .
 
 ```bash
 cd client
+npx tsc --project tsconfig.json # Compile TypeScript to JavaScript
 # Start a web server of your choice
 ```
 
