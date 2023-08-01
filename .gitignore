@@ -3,4 +3,4 @@ server/start_server.sh
 server/download
 client/data
 client/node_modules
-client/js
+client/src/js
