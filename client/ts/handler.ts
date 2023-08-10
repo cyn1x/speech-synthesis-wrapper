@@ -1,5 +1,5 @@
 import { PackageGoogleVoices, UnpackageGoogleVoices } from "./google.js"
-import { RequestMethod, VoiceTypeNames } from "./types.js"
+import { RequestMethod } from "./types.js"
 
 export const services = {
   google: "google",
@@ -7,60 +7,57 @@ export const services = {
   amazon: "amazon"
 }
 
-// export const GenericVoiceTypes: VoiceTypeNames = {
-//     neural: "Neural",
-//     standard: "Standard"
-// }
-
-export const GetVoices = async (platform: string) => {
-  const fetchedVoices = await HandleGet(platform)
+export async function GetVoices(platform: string) {
+  const fetchedVoices = await HandleGet(platform);
     
   switch (platform.toLowerCase()) {
     case services.google:
-      return UnpackageGoogleVoices(fetchedVoices)
-    // Not currently supporting other text-to-speech services
+      return UnpackageGoogleVoices(fetchedVoices);
+    default: 
+      console.log("The requested service is not supported.");
   }
-
+  
 }
 
-export const PostVoices = async (platform: string, data: { [k: string]: FormDataEntryValue }) => {
+export async function PostVoices(platform: string, data: { [k: string]: FormDataEntryValue }) {
   switch (platform) {
     case services.google:
-      const body = PackageGoogleVoices(data)
-      return await HandlePost(platform, body)
-    // Not currently supporting other text-to-speech services
+      const body = PackageGoogleVoices(data);
+      return await HandlePost(platform, body);
+    default: 
+      console.log("The requested service is not supported.");
   }
 
 }
 
-const HandleGet = async (platform: string) => {
+async function HandleGet(platform: string) {
   const req: RequestMethod = {
     uri: platform,
     method: 'GET',
     body: null
   }
 
-  const res = await Fetch(req)
-  const json = await res.json()
+  const res = await Fetch(req);
+  const json = await res.json();
 
-  return json
+  return json;
 }
 
-const HandlePost = async (platform: string, body: string) => {
+async function HandlePost(platform: string, body: string) {
   const req: RequestMethod = {
     uri: platform,
     method: 'POST',
     body: body
   }
 
-  const res = await Fetch(req)
-  const json = await res.json()
+  const res = await Fetch(req);
+  const json = await res.json();
 
-  return json
+  return json;
 }
 
-const Fetch = async (requestData: RequestMethod) => {
-  const server = 'http://localhost:8080/api/' + requestData.uri.toLowerCase()
+async function Fetch(requestData: RequestMethod) {
+  const server = 'http://localhost:8080/api/' + requestData.uri.toLowerCase();
 
   const response = await fetch(server, {
     method: requestData.method,
@@ -68,7 +65,7 @@ const Fetch = async (requestData: RequestMethod) => {
       'Content-Type': 'application/json'
     },
     body: requestData.body
-  })
+  });
 
-  return response
+  return response;
 }

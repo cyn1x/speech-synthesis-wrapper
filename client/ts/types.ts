@@ -4,13 +4,7 @@ export interface RequestMethod {
   body: string | null
 }
 
-interface LanguageState { 
-  lang: string,
-  type: string,
-}
-
 export interface FormStateData {
-  // voiceList: Map<string, VoiceTypes>,
   voiceList: Map<string, any>,
   voiceTypes: string[],
   voiceLang: string
@@ -28,11 +22,6 @@ export interface GoogleIncoming {
   ssml_gender: number
   natural_sample_rate_hertz: number
 }
-
-// export interface VoiceTypes {
-//   standard: string[]
-//   neural: string[]
-// }
 
 export interface VoiceTypeNames {
   neural: string

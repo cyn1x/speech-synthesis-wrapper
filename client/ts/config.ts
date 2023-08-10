@@ -1,5 +1,5 @@
-const LanguageTags = () => (
-  new Map([
+function LanguageTags() {
+  const tags = new Map([
     ["af-ZA",  "Afrikaans (South Africa)"],
     ["ar-XA",  "Arabic"],
     ["bn-IN",  "Bengali (India)"],
@@ -49,7 +49,9 @@ const LanguageTags = () => (
     ["tr-TR",  "Turkish (Turkey)"],
     ["uk-UA",  "Ukrainian (Ukraine)"],
     ["vi-VN",  "Vietnamese (Vietnam)"]
-  ])
-)
+  ]);
+
+  return tags;
+}
 
 export default LanguageTags

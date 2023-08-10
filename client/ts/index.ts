@@ -1,5 +1,4 @@
 import { GetVoices, PostVoices, services } from "./handler.js";
-// import { VoiceTypes } from "./types.js";
 import AudioManager from "./audio.js";
 
 
@@ -23,7 +22,7 @@ async function playAudio(event: Event) {
 
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
-    const formDataObj = Object.fromEntries(formData.entries())
+    const formDataObj = Object.fromEntries(formData.entries());
     formDataObj.pitch = (document.getElementById("pitch-slider") as HTMLInputElement).value;
     formDataObj.speed = (document.getElementById("speed-slider") as HTMLInputElement).value;
     
@@ -117,6 +116,7 @@ function populateVoiceNames() {
     }
 }
 
+// Initialize event listeners
 const serviceSelect = document.getElementById("services");
 if (serviceSelect) {
     Array.from(serviceSelect.children).forEach((child) => {
