@@ -134,6 +134,15 @@ if (voiceTypeSelect) {
     voiceTypeSelect.addEventListener("change", populateVoiceNames);
 }
 
+const voiceNameSelect = document.getElementById("voice-name");
+if (voiceNameSelect) {
+    voiceNameSelect.addEventListener("change", () => {
+        if (audioManager.cached) {
+            audioManager.clearAudio();
+        }
+    });
+}
+
 const downloadButton = document.getElementById("download");
 if (downloadButton) {
     downloadButton.addEventListener("click", downloadAudio);
