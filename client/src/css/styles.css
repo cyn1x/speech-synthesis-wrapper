@@ -4,7 +4,8 @@
   padding: 0;
 }
 
-html {
+html,
+body {
   height: 100%;
 }
 
@@ -13,7 +14,10 @@ body {
   font-family: "Roboto", sans-serif;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+}
+
+main {
+  margin: auto;
 }
 
 .tabs {
@@ -42,7 +46,7 @@ body {
 }
 
 form {
-  min-width: 960px;
+  width: 960px;
 }
 
 fieldset {
@@ -88,7 +92,6 @@ label {
 .buttons {
   flex-direction: column;
   margin-top: 5rem;
-  width: 100%;
 }
 
 .button-controls {
@@ -159,4 +162,15 @@ textarea {
 
 #download-icon {
   filter: invert(69%) sepia(0%) saturate(0%) hue-rotate(197deg) brightness(93%) contrast(91%);
+}
+
+@media screen and (max-width: 960px) {
+  form {
+    width: 90vw;
+    min-width: 400px;
+  }
+
+  .row {
+    display: inline;
+  }
 }
