@@ -28,6 +28,7 @@ Start the server and client.
 ```bash
 cd server
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
+set GOOS = "linux"
 go run ./cmd/srv/ .
 ```
 
@@ -38,6 +39,8 @@ cd client
 npx tsc --project tsconfig.json # Compile TypeScript to JavaScript
 # Start a web server of your choice
 ```
+
+Use `npx tsc --watch` for automatic compilation in development mode instead of using the once-off compile above.
 
 ## API Support
 
