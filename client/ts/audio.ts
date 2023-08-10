@@ -82,6 +82,7 @@ class AudioManager {
 
         downloadButton.disabled = false;
         downloadImg.style.filter = "invert(0%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)";
+        downloadButton.classList.add('clickable-button')
     }
     
     get paused(): boolean {

@@ -10,8 +10,8 @@
   <main>
     <div id="services" class="tabs">
       <button class="tab active" value="google">Google</button>
-      <button class="tab" value="microsoft">Microsoft</button>
-      <button class="tab" value="amazon">Amazon</button>
+      <button class="tab" value="microsoft" disabled>Microsoft</button>
+      <button class="tab" value="amazon" disabled>Amazon</button>
     </div>
     <form id="form">
       <fieldset>
@@ -73,7 +73,7 @@
 
       <div class="row">
         <div class="column buttons">
-          <button type="submit" data-playing="false" role="switch" aria-checked="false" class="button-controls" id="play">
+          <button type="submit" data-playing="false" role="switch" aria-checked="false" class="button-controls clickable-button" id="play">
             <img src="img/play-solid.svg" class="icons" id="audio-icon" alt="Play">
             <p>Speak It</p>
           </button>
