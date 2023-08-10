@@ -1,4 +1,4 @@
-server/config
+server/etc
 server/start_server.sh
 server/download
 client/data
