@@ -1,4 +1,4 @@
 {
     "liveServer.settings.multiRootWorkspaceName": "speech-synthesis-wrapper",
-    "liveServer.settings.root": "/client"
+    "liveServer.settings.root": "/client/src"
 }
