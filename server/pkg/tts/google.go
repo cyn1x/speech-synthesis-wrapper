@@ -6,7 +6,6 @@ import (
 	"time"
 
 	texttospeech "cloud.google.com/go/texttospeech/apiv1"
-	"github.com/tafenswdigitallab/tts-web-server/pkg/util"
 	texttospeechpb "google.golang.org/genproto/googleapis/cloud/texttospeech/v1"
 )
 
@@ -93,12 +92,8 @@ func SynthesizeText(data GoogleData) serverResponse {
 
 	log.Printf("Speech synthesised successfully\n")
 
-	filepath := "download/"
 	filename := data.Voice.Name
 	filename += "_" + time.Now().Format("20060102150405") + ".mp3"
-	util.WriteFile(res.AudioContent, filepath+filename)
-
-	log.Printf("Audio content written to file: %v\n", filename)
 
 	json := serverResponse{
 		Filename:     filename,

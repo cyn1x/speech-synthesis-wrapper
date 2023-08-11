@@ -2,6 +2,7 @@ package api
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"strings"
 
@@ -36,6 +37,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendMessage(w, &byt)
+	log.Printf("Response sent to client\n")
 }
 
 func determineURI(r *http.Request) string {

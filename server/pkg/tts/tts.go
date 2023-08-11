@@ -27,7 +27,18 @@ func GooglePost(data *[]byte) ([]byte, error) {
 
 	res := SynthesizeText(svc)
 
+	CreatePersistentAudioFile(res)
+
 	byt, err = util.EncodeJson(res)
 
 	return byt, err
+}
+
+func CreatePersistentAudioFile(res serverResponse) {
+	filepath := "download/"
+
+	go func() {
+		util.WriteFile(res.AudioContent, filepath+res.Filename)
+	}()
+
 }
