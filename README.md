@@ -2,6 +2,8 @@
 
 Speech Synthesis Wrapper processes text-to-speech requests by providing a preview of the generated audio and allowing the user to download the corresponding audio file.
 
+Check out the video demonstration on [YouTube](https://youtu.be/8iazTAqAHRY) to see it in action.
+
 ## Requirements
 
 - [npm](https://www.npmjs.com/)
