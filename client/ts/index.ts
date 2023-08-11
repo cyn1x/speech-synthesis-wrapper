@@ -39,12 +39,6 @@ async function playAudio(event: Event) {
     }
 }
 
-function downloadAudio() {
-    if (audioManager.cached) {
-        audioManager.downloadAudio();
-    }
-}
-
 async function populateForm(service: string) {
     const data: Map<string, any> | undefined = await GetVoices(service);
     sessionData.data = data;
@@ -145,7 +139,9 @@ if (voiceNameSelect) {
 
 const downloadButton = document.getElementById("download");
 if (downloadButton) {
-    downloadButton.addEventListener("click", downloadAudio);
+    downloadButton.addEventListener("click", function() {
+        audioManager.downloadAudio();
+    });
 }
 
 const formSubmit = document.getElementById("form");
