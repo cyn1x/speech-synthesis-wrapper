@@ -8,83 +8,85 @@
 </head>
 <body>
   <main>
-    <div id="services" class="tabs">
-      <button class="tab active" value="google">Google</button>
-      <button class="tab" value="microsoft" disabled>Microsoft</button>
-      <button class="tab" value="amazon" disabled>Amazon</button>
-    </div>
-    <form id="form">
-      <fieldset>
-        <div class="row">
-          <div class="column">
-            <label for="textarea">Text to speak:</label>
-            <textarea id="textarea" name="textarea">Speech Synthesis Wrapper is an implementation that showcases an example of how to dynamically integrate cloud text-to-speech services with end user tools for preview and download. The form is automatically populated with the latest updates from the API without any need for incremental developer intervention. This example makes use of a web server written in Go, and a frontend written in HTML5, CSS, and JavaScript. In a real-world scenario, the web server makes for a great candidate as a serverless function in a cloud platform, and the client could be built as an extension in an internal tool within your organisation that has widespread adoption.</textarea>
-          </div>
-        </div>
-  
-        <div class="row">
-          <div class="column column-1">
-            <label for="language">Language / locale</label>
-            <select name="language" id="language">
-            </select>
+    <section class="form">
+      <div id="services" class="tabs">
+        <button class="tab active" value="google">Google</button>
+        <button class="tab" value="microsoft" disabled>Microsoft</button>
+        <button class="tab" value="amazon" disabled>Amazon</button>
+      </div>
+      <form id="form">
+        <fieldset>
+          <div class="row">
+            <div class="column">
+              <label for="textarea">Text to speak:</label>
+              <textarea id="textarea" name="textarea">Speech Synthesis Wrapper is an implementation that showcases an example of how to dynamically integrate cloud text-to-speech services with end user tools for preview and download. The form is automatically populated with the latest updates from the API without any need for incremental developer intervention. This example makes use of a web server written in Go, and a frontend written in HTML5, CSS, and JavaScript. In a real-world scenario, the web server makes for a great candidate as a serverless function in a cloud platform, and the client could be built as an extension in an internal tool within your organisation that has widespread adoption.</textarea>
+            </div>
           </div>
     
+          <div class="row">
+            <div class="column column-1">
+              <label for="language">Language / locale</label>
+              <select name="language" id="language">
+              </select>
+            </div>
+      
+            <div class="column column-2">
+            <label for="voice-type">Voice type</label>
+            <select name="voice-type" id="voice-type">
+            </select>
+          </div>
+            
+          <div class="column column-3">
+            <label for="voice-name">Voice name</label>
+            <select name="voice-type" id="voice-name">
+            </select>
+          </div>
+        </div>
+    
+        <div class="row">
+          <div class="column column-1">
+            <label for="auto-profile">Audio device profile</label>
+            <select name="auto-profile" id="auto-profile">
+              <option value="default">Default</option>
+            </select>
+          </div>
+
           <div class="column column-2">
-          <label for="voice-type">Voice type</label>
-          <select name="voice-type" id="voice-type">
-          </select>
-        </div>
+            <div class="slider">
+              <div class="label-text">
+                <label for="auto-profile">Speed</label>
+                <div id="speed-value">0.00</div>
+              </div>
+              <input type="range" min="0.25" max="4.00" value="1.00" step="0.01" class="slider" id="speed-slider">
+            </div>
+          </div>
           
-        <div class="column column-3">
-          <label for="voice-name">Voice name</label>
-          <select name="voice-type" id="voice-name">
-          </select>
-        </div>
-      </div>
-  
-      <div class="row">
-        <div class="column column-1">
-          <label for="auto-profile">Audio device profile</label>
-          <select name="auto-profile" id="auto-profile">
-            <option value="default">Default</option>
-          </select>
-        </div>
-
-        <div class="column column-2">
-          <div class="slider">
-            <div class="label-text">
-              <label for="auto-profile">Speed</label>
-              <div id="speed-value">0.00</div>
+          <div class="column column-3">
+            <div class="slider">
+              <div class="label-text">
+                <label for="auto-profile">Pitch</label>
+                <div id="pitch-value">0.00</div>
+              </div>
+              <input type="range" min="-20.00" max="20.00" value="0.00" step="0.4" class="slider" id="pitch-slider">
             </div>
-            <input type="range" min="0.25" max="4.00" value="1.00" step="0.01" class="slider" id="speed-slider">
           </div>
         </div>
-        
-        <div class="column column-3">
-          <div class="slider">
-            <div class="label-text">
-              <label for="auto-profile">Pitch</label>
-              <div id="pitch-value">0.00</div>
-            </div>
-            <input type="range" min="-20.00" max="20.00" value="0.00" step="0.4" class="slider" id="pitch-slider">
+
+        <div class="row">
+          <div class="column buttons">
+            <button type="submit" data-playing="false" role="switch" aria-checked="false" class="button-controls clickable-button" id="play">
+              <img src="img/play-solid.svg" class="icons" id="audio-icon" alt="Play">
+              <p>Speak It</p>
+            </button>
+            <button type="button" class="button-controls" id="download" disabled>
+              <img src="img/download-solid.svg" class="icons" id="download-icon" alt="Play">
+              <p>Download</p>
+            </button>
           </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="column buttons">
-          <button type="submit" data-playing="false" role="switch" aria-checked="false" class="button-controls clickable-button" id="play">
-            <img src="img/play-solid.svg" class="icons" id="audio-icon" alt="Play">
-            <p>Speak It</p>
-          </button>
-          <button type="button" class="button-controls" id="download" disabled>
-            <img src="img/download-solid.svg" class="icons" id="download-icon" alt="Play">
-            <p>Download</p>
-          </button>
-        </div>
-      </div>
-      </fieldset>
-    </form>
+        </fieldset>
+      </form>
+    </section>
   </main>
   <script type="module" src="js/index.js"></script>
 </body>
