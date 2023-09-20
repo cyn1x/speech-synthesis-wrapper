@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/tafenswdigitallab/tts-web-server/pkg/api"
+	"github.com/cyn1x/speech-synthesis-wrapper/pkg/api"
 )
 
 // API ...

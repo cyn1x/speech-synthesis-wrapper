@@ -1,7 +1,7 @@
 package tts
 
 import (
-	util "github.com/tafenswdigitallab/tts-web-server/pkg/util"
+	util "github.com/cyn1x/speech-synthesis-wrapper/pkg/util"
 )
 
 // GoogleGet returns the available text to speech voices

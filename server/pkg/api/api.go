@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/tafenswdigitallab/tts-web-server/pkg/tts"
+	"github.com/cyn1x/speech-synthesis-wrapper/pkg/tts"
 )
 
 const (
